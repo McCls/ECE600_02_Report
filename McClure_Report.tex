@@ -62,7 +62,7 @@ An example of dynamixel motors' configurability can be seen in the development o
 Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a 6-joint arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This paper will seek to discuss the justification for using dynamixel motors improve the lab's modeling of that 6-joint arm. The de by developing a forward kinematic map, computing the system's jacobians, and geometrically deriving the inverse kinematic equations. 
 
 \section{Examples} %Detailed Examples section.
-The initial step in describing a robot is to create an equation that describes the robot's end effector position(s) based on joint variable settings. One standard for describing 
+The initial step in describing a robot is to create an equation that maps the robot's end effector position and orientation based on joint variable settings. One standard for describing this mapping it to use Denavit-Hartenberg convention (DH) to describe each joint using a set of 4 parameters describing the adjustment from a given frame $i$ to the $(i+1)$th frame \cite{siciliano2009robotics}. First, an xyz-coordinate frame is established around the joint, with the z-axis placed along the axis of rotation (for revolute joints) or along the axis of extension (for prismatic joints). From there, $d_i$ is distance traveled along the z-axis, $a_i$ is the distance traveled along the x-axis, $\theta_i$ is the rotation centered around the z-axis, and $\alpha_i$ is the rotation centered around the x-axis.
 
 \subsection{DH-Table}
 \begin{center}
@@ -94,7 +94,7 @@ the product of rotations around and translation along specified
 axes using the DH-Table parameters for a given joint i.
 
 \begin{equation}\label{A_Matrix}
-	A_i^i-1=Rot_z(\theta_i)Tran_z(d_i)Tran_x(a_i)Rot_z(\alpha_i)
+	A_i^i-1=Rot_z(\theta_i)Tran_z(d_i)Tran_x(a_i)Rot_x(\alpha_i)
 \end{equation}
 
 The homogenous transformation matrix for the entire robot,
