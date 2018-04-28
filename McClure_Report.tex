@@ -41,10 +41,14 @@ This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) ro
 \label{sec:introduction}
 \fi
 
-\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems\cite{mohammed2016design}, but are also lightweight and precise enough to be used in robot competition\cite{stuckler2012robocup} and research\cite{wijayasinghe2016human}.
+\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems, but are also lightweight and easily configurabled. These factors have led the Univeristy of Louisville Next Generation Systems (NGS) lab to use dynamixel based arms for research projects. This paper will seek to discuss the use of dynamixel servos in contemporary robot research, and will expound upon the design of an NGS dynamixel arm.
+\par A recent project by NGS member, and PH.D. candidate, Sumit Das focused on using neural networks to map force feedback along a 6-joint arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This paper will seek to discuss the justification for using dynamixel motors improve the lab's modeling of that 6-joint arm. The de by developing a forward kinematic map, computing the system's jacobians, and geometrically deriving the inverse kinematic equations. 
 
+\section{Comparison} %Literature Review section.
 
-\section{forward~kinematics}The initial step in describing a robot is to create an equation to describe the robot's end effector position(s) based on joint variable settings.
+\section{Examples} %Detailed Examples section.
+
+\section{Discussion}The initial step in describing a robot is to create an equation to describe the robot's end effector position(s) based on joint variable settings.
 
 \subsection{DH-Table}
 \begin{center}
@@ -58,7 +62,7 @@ This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) ro
 \hline
 		$3$    & $\pi/2$  & $0$   & $0$   & $\theta_3$ \\
 \hline
-		$4$    & $-\pi/2$ & $0$   & $0$   & $\theta_4$ \\
+		$4$    & $-\pi/2$ & $0$   & $L_3$   & $\theta_4$ \\
 \hline
 		$5$    & $\pi/2$  & $0$   & $0$   & $\theta_5$ \\
 \hline
@@ -84,3 +88,31 @@ which will map the end effector position to the base frame,
 can be calculated as the multiplicative product of all joint
 transformation matrices. Equation 2 shows this mapping for
 a n-joint system\ref{T_Matrix}.
+
+\begin{equation}\label{T_Matrix}
+	H=T_0^n = A_1^0*A_2^1 \dots*A_n^{n-1}
+\end{equation}
+
+\section{Jacobians}
+Along with knowing the instantaenous position and orientation
+values for the arm, modeling the robot requires a way
+to calculate the arm\'s velocity given a change in any joint
+values ($\theta$s). Three different forms are used for this process,
+all being different types of Jacobians. These three forms are:
+the analytical Jacobian, the spatial Jacobian, and the geometric
+Jacobian.
+
+\subsection{Analytical Jacobian}
+The analytical Jacobian (5) is comprised of a linear velocity
+sub-Jacobian (3) vertically concatinated with a angular velocity
+sub-Jacobian (4). The calculated value for the resulting
+analytical Jacobian can be found in Appendix B. The equations
+for calculating each column can be expressed differently based
+on whether the column represents a prismatic or a revolute
+joint Since the dynamixel arm only has revolute joints, only
+the that expression is shown.
+
+\bibliographystyle{IEEEtran} 
+\bibliography{IEEEabrv,McClure_Report} 
+
+\end{document}
