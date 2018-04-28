@@ -41,14 +41,28 @@ This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) ro
 \label{sec:introduction}
 \fi
 
-\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems, but are also lightweight and easily configurabled. These factors have led the Univeristy of Louisville Next Generation Systems (NGS) lab to use dynamixel based arms for research projects. This paper will seek to discuss the use of dynamixel servos in contemporary robot research, and will expound upon the design of an NGS dynamixel arm.
-\par A recent project by NGS member, and PH.D. candidate, Sumit Das focused on using neural networks to map force feedback along a 6-joint arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This paper will seek to discuss the justification for using dynamixel motors improve the lab's modeling of that 6-joint arm. The de by developing a forward kinematic map, computing the system's jacobians, and geometrically deriving the inverse kinematic equations. 
+\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems, but are also lightweight and easily configurabled. These factors have led the Univeristy of Louisville Next Generation Systems (NGS) lab to use dynamixel based arms for research projects. This paper will seek to discuss the use of dynamixel servos in contemporary robot research, and will expound upon the mathmatical models for an NGS designed dynamixel arm.
 
 \section{Comparison} %Literature Review section.
+As dynamixel servos are descrete actuators, their implementation is constrained only by the frame into which they are installed. They can even be used in conjunction with other motors to create complex robotic system, such as in the Zeno R-30.
+
+\subsection{Zeno R-30}
+The Zeno R-30 is a humanoid robot built by Hanson RoboKind for NGS lab research \cite{wijayasinghe2016human}. The robot, standing twenty six inches tall, is comprised of ninteen different motors (eight of which are dynamixel motors), and seven distinct motor types. These motors combine to give Zeno the ability replicate human emotional expressions and physical gestures.
+
+In a configuration by themselves, Dynamixel motors have shown to be effective servos even for competetive applications.
+
+\subsection{Cosero}
+As part of the Robocup international robotics competitions, home service and assistance robots compete agianst eachother to accomplish a series of domestic based challenges. In the 2011 Istanbul Robocup@Home competition, a group from the University of Bonn entered Cosero, a robot that uses only Dynamixel motors for joint control. Cosero earn the highest scores for each stage of the competition, and achieved first place overall, beating out ninteen other teams \cite{stuckler2012robocup}.
+
+Even when a system's requirements for a joint surpass the specs of a dynamixel motor, the ability to chain multiple motors together can be used to overcome individual servo limitations.
+
+\subsection{Upper Limb Exoskeleton}
+An example of dynamixel motors' configurability can be seen in the development of a 3 degree of freedom (DOF) upper limb exoskeleton \cite{mahdavian2015design}. For human exoskeleton design, the length of joints was made adjustable to fit the biometrics of a particular wearer. Due to the high amount of torque required to completely support a human arm, the load-bearing sholder joint uses two syncronized MX-106 motors.
+
+Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a 6-joint arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This paper will seek to discuss the justification for using dynamixel motors improve the lab's modeling of that 6-joint arm. The de by developing a forward kinematic map, computing the system's jacobians, and geometrically deriving the inverse kinematic equations. 
 
 \section{Examples} %Detailed Examples section.
-
-\section{Discussion}The initial step in describing a robot is to create an equation to describe the robot's end effector position(s) based on joint variable settings.
+The initial step in describing a robot is to create an equation that describes the robot's end effector position(s) based on joint variable settings. One standard for describing 
 
 \subsection{DH-Table}
 \begin{center}
@@ -111,6 +125,8 @@ for calculating each column can be expressed differently based
 on whether the column represents a prismatic or a revolute
 joint Since the dynamixel arm only has revolute joints, only
 the that expression is shown.
+
+\section{Discussion}
 
 \bibliographystyle{IEEEtran} 
 \bibliography{IEEEabrv,McClure_Report} 
