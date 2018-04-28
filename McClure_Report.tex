@@ -1,0 +1,86 @@
+%% bare_adv.tex
+\documentclass[10pt,journal]{IEEEtran}
+\ifCLASSOPTIONcompsoc
+  \usepackage[nocompress]{cite}
+\else
+  \usepackage{cite}
+\fi
+
+\usepackage{amsmath}
+\usepackage{url}
+
+\ifCLASSOPTIONcompsoc
+  \usepackage[caption=false,font=footnotesize,labelfont=sf,textfont=sf]{subfig}
+\else
+  \usepackage[caption=false,font=footnotesize]{subfig}
+\fi
+
+\begin{document}
+% PAGE HEADER
+\markboth{University of Louisville,~ECE 600-02, Spring~2018}%
+{Shell \MakeLowercase{\textit{et al.}}: Kinematics for a 6 DOF Dynamixel Arm Comprised of an Anthropomorphic Arm and Spherical Wrist}
+
+% DOCUMENT HEADER
+\title{6 DOF Dynamixel Arm Kinematics}
+\author{Christopher~McClure\\ Department of Electrical and Computer Engineering\\University of Louisville\\email: cmcclure17@gmail.com}
+
+% ABSTRACT
+\IEEEtitleabstractindextext{%
+\begin{abstract}
+This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) robotic arm constructed using Dynamixel motors. A brief overview of other dynamixel based robots will be given, and used to showcase this arm's design. The arm will be modeled using Denavit-Hartenberg (DH) parameters. From there, the forward kinematic map will be established, and the analytical, spatial, and geometric jacobians will be derived. Finally, the inverse kinematics of the robot will be found geometrically.  
+\end{abstract}}
+\maketitle
+
+\IEEEdisplaynontitleabstractindextext
+
+
+\ifCLASSOPTIONcompsoc
+\IEEEraisesectionheading{\section{Introduction}\label{sec:introduction}}
+\else
+\section{Introduction}
+\label{sec:introduction}
+\fi
+
+\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems\cite{mohammed2016design}, but are also lightweight and precise enough to be used in robot competition\cite{stuckler2012robocup} and research\cite{wijayasinghe2016human}.
+
+
+\section{forward~kinematics}The initial step in describing a robot is to create an equation to describe the robot's end effector position(s) based on joint variable settings.
+
+\subsection{DH-Table}
+\begin{center}
+\begin{tabular}{ | c | c | c | c | c | } 
+		\hline
+		Link   & $\alpha$ & a     & d     & $\theta$   \\
+\hline\hline
+		$1$    & $\pi/2$  & $0$   & $L_1$ & $\theta_1$ \\
+\hline
+		$2$    & $0$      & $L_2$ & $0$   & $\theta_2$ \\
+\hline
+		$3$    & $\pi/2$  & $0$   & $0$   & $\theta_3$ \\
+\hline
+		$4$    & $-\pi/2$ & $0$   & $0$   & $\theta_4$ \\
+\hline
+		$5$    & $\pi/2$  & $0$   & $0$   & $\theta_5$ \\
+\hline
+		$6$    & $0$      & $0$   & $L_4$ & $\theta_6$ \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsection{Homogenous Transformation Matrices}
+Using the above table, the change in position and orientation
+associated with moving from a joint to the end of the link
+attached to it can be described accoring to equation \ref{A_Matrix}. In this
+equation, A is a homogenous transformation matrix that is
+the product of rotations around and translation along specified
+axes using the DH-Table parameters for a given joint i.
+
+\begin{equation}\label{A_Matrix}
+	A_i^i-1=Rot_z(\theta_i)Tran_z(d_i)Tran_x(a_i)Rot_z(\alpha_i)
+\end{equation}
+
+The homogenous transformation matrix for the entire robot,
+which will map the end effector position to the base frame,
+can be calculated as the multiplicative product of all joint
+transformation matrices. Equation 2 shows this mapping for
+a n-joint system\ref{T_Matrix}.
