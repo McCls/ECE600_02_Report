@@ -75,7 +75,7 @@ An example of dynamixel motors' configurability can be seen in the development o
 
 \par Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a robotic arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This arm uses seven motors in total to act as six revolute joints, with the first joint comprised of two motors to provide  This paper will seek to improve the lab's modeling of that six joint arm, shown in Figure \ref{fig:DynamixelPhoto}. This will be done by developing a forward kinematic map, computing the system's Jacobians, and geometrically deriving the inverse kinematic equations. 
 
-\section{Examples} %Detailed Examples section.
+\section{Calculations} %Detailed Examples section.
 The initial step in describing a robot is to create an equation that maps the robot's end effector position and orientation based on joint variable settings. One standard for describing this mapping it to use Denavit-Hartenberg convention (DH) to describe each joint using a set of 4 parameters \cite{siciliano2009robotics}. First, an xyz-coordinate frame is established around the joint, with the z-axis placed along the axis of rotation (for revolute joints) or along the axis of extension (for prismatic joints), see Fig. \ref{fig:frameAssignment}. 
 
 \begin{figure}[ht!]
@@ -142,7 +142,7 @@ the analytical Jacobian, the spatial Jacobian, and the geometric
 Jacobian.
 
 \subsubsection{Analytical Jacobian}
-The analytical Jacobian\ref{J_A} is comprised of a linear velocity sub-Jacobian\ref{Jv} vertically concatinated with an angular velocity sub-Jacobian\ref{Jw}. The equations for calculating each column can be expressed differently based on whether the column represents a prismatic or a revolute joint. Since the dynamixel arm only has revolute joints, only that expression is shown.
+The analytical Jacobian\ref{J_A} is comprised of a linear velocity sub-Jacobian\ref{Jv} vertically concatinated with an angular velocity sub-Jacobian\ref{Jw}.
 
 \begin{mycapequ}[!ht]
 \begin{equation}\label{Jv}
@@ -172,8 +172,37 @@ J_A = \frac{\partial J_v}{\partial J_\omega}
 The calculated value for the analytical Jacobian can be found in Appendix B.
 
 \subsubsection{Spatial Jacobian}
-The spatial Jacobian\ref{J_A} is comprised of a total velocity sub-Jacobian\ref{Jvrw} vertically concatinated with an orientation sub-Jacobian\ref{Jw}. The equations for calculating each column can be expressed differently based on whether the column represents a prismatic or a revolute joint. Since the dynamixel arm only has revolute joints, only that expression is shown.
+The spatial Jacobian is comprised of a total velocity sub-Jacobian vertically concatinated with an orientation sub-Jacobian \ref{equ:spatialJacobian}. The equations to form the spatial Jacobion are taken from Murray %PAGE CITATION
+The process behind using these equations starts with the formation of twists ($\xi$s) according to \ref{equ:twist}. These twists are used to form exponential matrices according to \ref{equ:expMatrix}. Finally, the spatial Jacobian can be formed as a concatination of prime twists, where prime twists are formed according to \ref{equ:primeTwist} and the spatial Jacobian is summarized according to \ref{equ:spatialJacobian}.
 
+\begin{equation}\label{equ:twist}
+	\xi_i = \begin{bmatrix} p_{i0} \\ \omega_i \end{bmatrix}
+\end{equation}
+
+\begin{equation}\label{equ:expMatrix}
+	e^{\hat{\xi_i} \theta_i} = \begin{bmatrix} e^{\hat{\omega_i} \theta_i} & (I - e^{\hat{\omega_i} \theta_i})(\omega_i X p_{i0})+\omega_i \omega_i^T p_{i0} \theta_i \\
+	0 & 1
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}\label{equ:primeTwist}
+	\xi_i`=Adt_{\prod_{i=1}^{i-1}e^{\hat{\xi_i}\theta_i}}
+\end{equation}
+
+\begin{equation}\label{equ:spatialJacobian}
+	J_s = \begin{bmatrix} \xi_1` & \xi_2` & \dots & \xi_n` \end{bmatrix} = \frac{J_{v+\omega X r}}{J_o}
+\end{equation}
+
+The derived solution for the spatial Jacobian can be found in Appendix C.
+
+\subsubsection{Geometric Jacobian}
+The geometric Jacobian \ref{J_G} is comprised of a linear velocity sub-Jacobian\ref{Jv} vertically concatinated with an orientation sub-Jacobian\ref{Jw}. These values can be taken directly from the analytical Jacobian and spatial Jacobian that have already been calculated.
+
+\begin{equation}\label{J_G}
+	J_G = \frac{\partial J_v}{\partial J_o}
+\end{equation}
+
+\subsection{Inverse Kinematics}
 
 \section{Discussion}
 
