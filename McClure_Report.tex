@@ -8,6 +8,11 @@
 
 \usepackage{amsmath}
 \usepackage{url}
+\usepackage{graphicx}
+\usepackage{caption}
+
+\DeclareCaptionType{mycapequ}[][List of equations]
+\captionsetup[mycapequ]{labelformat=empty}
 
 \ifCLASSOPTIONcompsoc
   \usepackage[caption=false,font=footnotesize,labelfont=sf,textfont=sf]{subfig}
@@ -43,28 +48,44 @@ This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) ro
 
 \IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems, but are also lightweight and easily configurabled. These factors have led the Univeristy of Louisville Next Generation Systems (NGS) lab to use dynamixel based arms for research projects. This paper will seek to discuss the use of dynamixel servos in contemporary robot research, and will expound upon the mathmatical models for an NGS designed dynamixel arm.
 
-\section{Comparison} %Literature Review section.
-As dynamixel servos are descrete actuators, their implementation is constrained only by the frame into which they are installed. They can even be used in conjunction with other motors to create complex robotic system, such as in the Zeno R-30.
+\section{Comparison}
+As dynamixel servos are descrete actuators, their implementation is constrained only by the frame in which they are used. They can even be used in conjunction with other motors to create complex robotic system, such as in the Zeno R-30.
 
 \subsection{Zeno R-30}
 The Zeno R-30 is a humanoid robot built by Hanson RoboKind for NGS lab research \cite{wijayasinghe2016human}. The robot, standing twenty six inches tall, is comprised of ninteen different motors (eight of which are dynamixel motors), and seven distinct motor types. These motors combine to give Zeno the ability replicate human emotional expressions and physical gestures.
-
+\section*{}
 In a configuration by themselves, Dynamixel motors have shown to be effective servos even for competetive applications.
 
 \subsection{Cosero}
 As part of the Robocup international robotics competitions, home service and assistance robots compete agianst eachother to accomplish a series of domestic based challenges. In the 2011 Istanbul Robocup@Home competition, a group from the University of Bonn entered Cosero, a robot that uses only Dynamixel motors for joint control. Cosero earn the highest scores for each stage of the competition, and achieved first place overall, beating out ninteen other teams \cite{stuckler2012robocup}.
 
+\section*{}
 Even when a system's requirements for a joint surpass the specs of a dynamixel motor, the ability to chain multiple motors together can be used to overcome individual servo limitations.
 
 \subsection{Upper Limb Exoskeleton}
 An example of dynamixel motors' configurability can be seen in the development of a 3 degree of freedom (DOF) upper limb exoskeleton \cite{mahdavian2015design}. For human exoskeleton design, the length of joints was made adjustable to fit the biometrics of a particular wearer. Due to the high amount of torque required to completely support a human arm, the load-bearing sholder joint uses two syncronized MX-106 motors.
 
-Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a 6-joint arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This paper will seek to discuss the justification for using dynamixel motors improve the lab's modeling of that 6-joint arm. The de by developing a forward kinematic map, computing the system's jacobians, and geometrically deriving the inverse kinematic equations. 
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.75\linewidth]{Dynamixel.jpg}
+\caption{6-DOF Dynamixel arm constructed by the NGS lab} 
+\label{fig:DynamixelPhoto}
+\end{figure}
+
+\par Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a robotic arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This arm uses seven motors in total to act as six revolute joints, with the first joint comprised of two motors to provide  This paper will seek to improve the lab's modeling of that six joint arm, shown in Figure \ref{fig:DynamixelPhoto}. This will be done by developing a forward kinematic map, computing the system's Jacobians, and geometrically deriving the inverse kinematic equations. 
 
 \section{Examples} %Detailed Examples section.
-The initial step in describing a robot is to create an equation that maps the robot's end effector position and orientation based on joint variable settings. One standard for describing this mapping it to use Denavit-Hartenberg convention (DH) to describe each joint using a set of 4 parameters describing the adjustment from a given frame $i$ to the $(i+1)$th frame \cite{siciliano2009robotics}. First, an xyz-coordinate frame is established around the joint, with the z-axis placed along the axis of rotation (for revolute joints) or along the axis of extension (for prismatic joints). From there, $d_i$ is distance traveled along the z-axis, $a_i$ is the distance traveled along the x-axis, $\theta_i$ is the rotation centered around the z-axis, and $\alpha_i$ is the rotation centered around the x-axis.
+The initial step in describing a robot is to create an equation that maps the robot's end effector position and orientation based on joint variable settings. One standard for describing this mapping it to use Denavit-Hartenberg convention (DH) to describe each joint using a set of 4 parameters \cite{siciliano2009robotics}. First, an xyz-coordinate frame is established around the joint, with the z-axis placed along the axis of rotation (for revolute joints) or along the axis of extension (for prismatic joints), see Fig. \ref{fig:frameAssignment}. 
 
-\subsection{DH-Table}
+\begin{figure}[ht!]
+\includegraphics[width=0.75\linewidth]{FrameAssignment.PNG}
+\caption{xyz-frame assignement for the Dynamixel arm}
+\label{fig:frameAssignment}
+\end{figure}
+
+\subsection{DH-Parameterization}
+From the frame assignment, four parameters describing the adjustment from a given frame $i$ to the $(i+1)$th frame are generated for each frame. Those parameters are: $d_i$ (the distance traveled along the z-axis), $a_i$ (the distance traveled along the x-axis), $\theta_i$ (the rotation centered around the z-axis), and $\alpha_i$ (the rotation centered around the x-axis).
 \begin{center}
 \begin{tabular}{ | c | c | c | c | c | } 
 		\hline
@@ -76,7 +97,7 @@ The initial step in describing a robot is to create an equation that maps the ro
 \hline
 		$3$    & $\pi/2$  & $0$   & $0$   & $\theta_3$ \\
 \hline
-		$4$    & $-\pi/2$ & $0$   & $L_3$   & $\theta_4$ \\
+		$4$    & $-\pi/2$ & $0$   & $L_3$ & $\theta_4$ \\
 \hline
 		$5$    & $\pi/2$  & $0$   & $0$   & $\theta_5$ \\
 \hline
@@ -91,7 +112,7 @@ associated with moving from a joint to the end of the link
 attached to it can be described accoring to equation \ref{A_Matrix}. In this
 equation, A is a homogenous transformation matrix that is
 the product of rotations around and translation along specified
-axes using the DH-Table parameters for a given joint i.
+axes using the DH-Table parameters for a given joint $i$.
 
 \begin{equation}\label{A_Matrix}
 	A_i^i-1=Rot_z(\theta_i)Tran_z(d_i)Tran_x(a_i)Rot_x(\alpha_i)
@@ -100,14 +121,18 @@ axes using the DH-Table parameters for a given joint i.
 The homogenous transformation matrix for the entire robot,
 which will map the end effector position to the base frame,
 can be calculated as the multiplicative product of all joint
-transformation matrices. Equation 2 shows this mapping for
-a n-joint system\ref{T_Matrix}.
+transformation matrices. Equation \ref{T_Matrix} shows this mapping for
+a n-joint system, with $R_{3x3}$ giving the end effector orientation and $p_{3x1}$ giving the xyz-cartesian end effector position with respect to the base frame.
 
 \begin{equation}\label{T_Matrix}
-	H=T_0^n = A_1^0*A_2^1 \dots*A_n^{n-1}
+	H_{4x4}=T_0^n = A_1^0*A_2^1 \dots*A_n^{n-1} = 
+		\begin{bmatrix}
+			R_{3x3} & p_{3x1} \\
+			0_{1x3} & 1
+		\end{bmatrix}
 \end{equation}
 
-\section{Jacobians}
+\subsection{Jacobians}
 Along with knowing the instantaenous position and orientation
 values for the arm, modeling the robot requires a way
 to calculate the arm\'s velocity given a change in any joint
@@ -116,15 +141,39 @@ all being different types of Jacobians. These three forms are:
 the analytical Jacobian, the spatial Jacobian, and the geometric
 Jacobian.
 
-\subsection{Analytical Jacobian}
-The analytical Jacobian (5) is comprised of a linear velocity
-sub-Jacobian (3) vertically concatinated with a angular velocity
-sub-Jacobian (4). The calculated value for the resulting
-analytical Jacobian can be found in Appendix B. The equations
-for calculating each column can be expressed differently based
-on whether the column represents a prismatic or a revolute
-joint Since the dynamixel arm only has revolute joints, only
-the that expression is shown.
+\subsubsection{Analytical Jacobian}
+The analytical Jacobian\ref{J_A} is comprised of a linear velocity sub-Jacobian\ref{Jv} vertically concatinated with an angular velocity sub-Jacobian\ref{Jw}. The equations for calculating each column can be expressed differently based on whether the column represents a prismatic or a revolute joint. Since the dynamixel arm only has revolute joints, only that expression is shown.
+
+\begin{mycapequ}[!ht]
+\begin{equation}\label{Jv}
+J_v = \frac{\partial p}{\partial q} = \begin{bmatrix} 
+\frac{\partial p_x}{\partial \theta_1} & \frac{\partial p_x}{\partial \theta_2} & \dots & \frac{\partial p_x}{\partial \theta_3} \\
+\frac{\partial p_y}{\partial \theta_1} & \frac{\partial p_y}{\partial \theta_2} & \dots & \frac{\partial p_y}{\partial \theta_3} \\
+\frac{\partial p_z}{\partial \theta_1} & \frac{\partial p_z}{\partial \theta_2} & \dots & \frac{\partial p_z}{\partial \theta_3}
+		\end{bmatrix} 
+\end{equation}
+\caption{where $p$ is the position of the end effector as a function of each joint's $\theta$}
+\end{mycapequ}
+
+\begin{mycapequ}[!ht]
+\begin{equation}\label{Jw}
+	J_\omega = 
+		\begin{bmatrix} 
+			\omega_1 & \omega_2 & \dots & \omega_n 
+		\end{bmatrix} 
+\end{equation}
+\caption{where $\omega_i$ is a unit vector along the rotational axis of joint $i$ when the arm is at its initial position (i.e. when $\theta_{1-n}=0$)}
+\end{mycapequ}
+
+\begin{equation}\label{J_A}
+J_A = \frac{\partial J_v}{\partial J_\omega}
+\end{equation}
+
+The calculated value for the analytical Jacobian can be found in Appendix B.
+
+\subsubsection{Spatial Jacobian}
+The spatial Jacobian\ref{J_A} is comprised of a total velocity sub-Jacobian\ref{Jvrw} vertically concatinated with an orientation sub-Jacobian\ref{Jw}. The equations for calculating each column can be expressed differently based on whether the column represents a prismatic or a revolute joint. Since the dynamixel arm only has revolute joints, only that expression is shown.
+
 
 \section{Discussion}
 
