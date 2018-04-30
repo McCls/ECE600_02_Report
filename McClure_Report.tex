@@ -209,7 +209,7 @@ To properly control the dynamixel arm, it is necessary to determine the necessar
 One of the benefits that a spherical provides is that all of joints can be mathmatically described as having the same center-point. Since the end-effector orientation is given as one of the inverse kinematic inputs, the desired position of the wrist center can be easily calculated as a vector of length L4 moving away from the target point in the oposite direction to the desired orientation vector. This resulting cartesian location is the center of the spherical wrist, which is also the necessary position for end of the anthropomorphic arm.
 
 \subsubsection{Anthropomorphic Arm Positions}
-The inverse kinematic equation for the anthropomophic arm results in non-unique solutions. This can easily be seen in Figure \ref{fig:armOrientations}. ConConviniently, the joint orientation for the Dynamixel arm follows a common configuration. As such, potential inverse kinematic solutions already exist \cite{siciliano2009robotics}.
+The inverse kinematic equation for the anthropomophic arm results in non-unique solutions. This can easily be seen in Figure \ref{fig:armOrientations}. ConConviniently, the joint orientation for the Dynamixel arm follows a common configuration. As such, potential inverse kinematic solutions already exist \cite{siciliano2009robotics}, and only need slight adjustment to account for differnces in DH parameterization and attachment of the spherical wrist to the final anthropomophic arm frame.
 
 \begin{figure}[ht!]
 \centering
@@ -265,7 +265,10 @@ The final arm angle, $\theta_2$, can be solved four different ways; two solution
 \end{align}
 
 \section{Discussion}
-The derived forward kinematic map 
+The derived forward kinematic map was coded into MatLab and tested against Peter Corke's Robotics Toolbox SerialLink.fkine function \ref{Corke} at theta values of $[pi/4, pi/3, pi/5, pi/3, pi/3, pi/3]$. The values for the end effector homogenous transformation matrix were the equivalent for at least four scientific digits. With the help of Sumit Das, one set of inverse kinematics solutions was tested on the Dynamixel arm. Starting at the first joint, each motor was adjusted and a picture was taken of the arm. Figure \ref{extraCredit} shows the physical arm's behavior compared to a MatLab Robotics Toolbox simulation.
+
+
+
 
 \bibliographystyle{IEEEtran} 
 \bibliography{IEEEabrv,McClure_Report} 
