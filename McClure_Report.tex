@@ -32,7 +32,7 @@
 % ABSTRACT
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) robotic arm constructed using Dynamixel motors. A brief overview of other dynamixel based robots will be given, and used to showcase this arm's design. The arm will be modeled using Denavit-Hartenberg (DH) parameters. From there, the forward kinematic map will be established, and the analytical, spatial, and geometric jacobians will be derived. Finally, the inverse kinematics of the robot will be found geometrically.  
+This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) robotic arm constructed using Dynamixel motors. A brief overview of other dynamixel based robots will be given, and used to showcase this arm's design. The arm will be modeled using Denavit-Hartenberg (DH) parameters. From there, the forward kinematic map will be established, and the analytical, spatial, and geometric jacobians will be derived. Finally, the inverse kinematics of the robot will be found geometrically.   
 \end{abstract}}
 \maketitle
 
@@ -46,7 +46,7 @@ This paper will discuss the kinematic modeling of a 6 degree of freedom (DOF) ro
 \label{sec:introduction}
 \fi
 
-\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and controlled centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems, but are also lightweight and easily configurabled. These factors have led the Univeristy of Louisville Next Generation Systems (NGS) lab to use dynamixel based arms for research projects. This paper will seek to discuss the use of dynamixel servos in contemporary robot research, and will expound upon the mathmatical models for an NGS designed dynamixel arm.
+\IEEEPARstart{I}{n} the recent past, the cost of components has limited widespread use of robotics in industry. However, in recent years, the cost of robotics production has dropped\cite{west2015happens}. An example of this price drop can be seen in types of actuators like the Dynamixel series of servos producted by Robotis\cite{dynamixel}. Dyamixel servos are discrete components that can be daisy chained together and  centrally using RS-485 or TTL communication protocols\cite{dynamixelChart}. These motors have allowed for fabrication of affordable custom systems, but are also lightweight and easily configurabled. These factors have led the Univeristy of Louisville Next Generation Systems (NGS) lab to use dynamixel based arms for research projects. This paper will seek to discuss the use of dynamixel servos in contemporary robot research, and will expound upon the mathmatical models for an NGS designed dynamixel arm.
 
 \section{Comparison}
 As dynamixel servos are descrete actuators, their implementation is constrained only by the frame in which they are used. They can even be used in conjunction with other motors to create complex robotic system, such as in the Zeno R-30.
@@ -73,10 +73,10 @@ An example of dynamixel motors' configurability can be seen in the development o
 \label{fig:DynamixelPhoto}
 \end{figure}
 
-\par Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a robotic arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This arm uses seven motors in total to act as six revolute joints, with the first joint comprised of two motors to provide  This paper will seek to improve the lab's modeling of that six joint arm, shown in Figure \ref{fig:DynamixelPhoto}. This will be done by developing a forward kinematic map, computing the system's Jacobians, and geometrically deriving the inverse kinematic equations. 
+\par Recent work by NGS member, and PH.D. candidate, Sumit Das focuses on using neural networks to map force feedback along a robotic arm comprised entirely of MX-106 dynamixel servos and Robotis produced servo brackets. This arm uses seven motors in total to act as six revolute joints, with the first joint comprised of two motors to provide additional torque for supporting the arm (similar to the upper limb exoskeleton). The arm is arrayed with the first three joints forming an athropomorphic arm, and the last three joints forming a spherical wrist, similar to joint setup of a FANUC 200ic arm /cite{BOUZGOU2015703}. This paper will seek to improve the lab's modeling of this six joint arm, shown in Figure \ref{fig:DynamixelPhoto}. This will be done by developing a forward kinematic map, computing the system's Jacobians, and geometrically deriving the inverse kinematic equations. 
 
 \section{Calculations} %Detailed Examples section.
-The initial step in describing a robot is to create an equation that maps the robot's end effector position and orientation based on joint variable settings. One standard for describing this mapping it to use Denavit-Hartenberg convention (DH) to describe each joint using a set of 4 parameters \cite{siciliano2009robotics}. First, an xyz-coordinate frame is established around the joint, with the z-axis placed along the axis of rotation (for revolute joints) or along the axis of extension (for prismatic joints), see Fig. \ref{fig:frameAssignment}. 
+The initial step in describing a robot is to create an equation that maps the robot's end effector position and orientation based on joint variable settings. One standard for describing this mapping is to use standard Denavit-Hartenberg convention (DH) to describe each joint using a set of 4 parameters \cite{spong2006robot}. First, an xyz-coordinate frame is established around the joint, with the z-axis placed along the axis of rotation (for revolute joints) or along the axis of extension (for prismatic joints), see Fig. \ref{fig:frameAssignment}. 
 
 \begin{figure}[ht!]
 \includegraphics[width=0.75\linewidth]{FrameAssignment.PNG}
@@ -122,7 +122,7 @@ The homogenous transformation matrix for the entire robot,
 which will map the end effector position to the base frame,
 can be calculated as the multiplicative product of all joint
 transformation matrices. Equation \ref{T_Matrix} shows this mapping for
-a n-joint system, with $R_{3x3}$ giving the end effector orientation and $p_{3x1}$ giving the xyz-cartesian end effector position with respect to the base frame.
+a n-joint system, with $R_{3x3} \in SO(3)$ giving the end effector orientation and $p_{3x1}$ giving the xyz-cartesian end effector position with respect to the base frame.
 
 \begin{equation}\label{T_Matrix}
 	H_{4x4}=T_0^n = A_1^0*A_2^1 \dots*A_n^{n-1} = 
@@ -203,8 +203,69 @@ The geometric Jacobian \ref{J_G} is comprised of a linear velocity sub-Jacobian\
 \end{equation}
 
 \subsection{Inverse Kinematics}
+To properly control the dynamixel arm, it is necessary to determine the necessary $\theta$ values to reach a given point (rather than calculating positional and Jacobian values given a set of $\theta$s). These inverse kinematic calculations are done by geometrically analyzing the robotic system and solving for the possivle end effector position in terms of trigonometric values. \par To simplify the inverse kinematics, the robot will be broken up into two distinct parts, a three joint spherical wrist for conting end effector orientation, and a three joint anthropomorphic arm for moving conting end effector position. This technique is used to greatly simplify inverse kinematics problems \ref{spong2006robot} \ref{siciliano2009robotics}, and inclusion of a spherical wrist as the last three joints provids a special geometric problem that is relatively easy to solve \ref{BOUZGOU2015703}. To start the geometric calculations, the intersection between the spherical wrist and the anthropomorphic arm is computed.
+
+\subsubsection{Wrist Center Location}
+One of the benefits that a spherical provides is that all of joints can be mathmatically described as having the same center-point. Since the end-effector orientation is given as one of the inverse kinematic inputs, the desired position of the wrist center can be easily calculated as a vector of length L4 moving away from the target point in the oposite direction to the desired orientation vector. This resulting cartesian location is the center of the spherical wrist, which is also the necessary position for end of the anthropomorphic arm.
+
+\subsubsection{Anthropomorphic Arm Positions}
+The inverse kinematic equation for the anthropomophic arm results in non-unique solutions. This can easily be seen in Figure \ref{fig:armOrientations}. ConConviniently, the joint orientation for the Dynamixel arm follows a common configuration. As such, potential inverse kinematic solutions already exist \cite{siciliano2009robotics}.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=0.75\linewidth]{armOrientations.PNG}
+\caption{Possible athropomorphic arm configurations to reach the same desired solution}
+\label{fig:armOrientations}
+\end{figure}
+
+Using the x-axis to y-axis position ratio of the wrist center point ($p_w$), $\theta_1$ can be easily determined according to equation \ref{equ:theta1}. 
+
+\begin{align} \label{equ:theta1}
+	\theta_1 = 
+		\begin{cases}
+			arctan2(pw_y,pw_x) - \pi & pw_y \geq 0  \\
+			arctan2(pw_y,pw_x) + \pi & pw_y < 0 
+		\end{cases} 
+	\\
+	where\ arctan2 = 
+		\begin{cases}
+			\pi - arctan2(a,b) & a \geq 0 \\
+			-\pi - arctan2(a,b) & a < 0
+		\end{cases} 
+\end{align}
+
+With some slight rearanging of the law of cosines, we can solve for $cos(\theta_3)$ according to eqution \ref{equ:cos3}. The possible solutions for $\theta_3$ can therefore be expressed according to \ref{equ:theta3}.
+
+\begin{equation}\label{equ:cos3}
+	cos(\theta_3) = \frac{p^2_{w_x} + p^2_{w_x} + p^2_{w_x} - L_2^2 - L_3^2}{2 L_2 L_3}
+\end{equation}
+
+\begin{equation}\label{equ:theta3}
+	\theta_3 = arctan2(sin{\theta_3),cos{\theta_3}}) + \pi/2
+\end{equation}
+
+\begin{equation*}
+	where\ sin(\theta_3) = \pm\sqrt{1-cos^2(\theta_3)}
+\end{equation*}
+
+The final arm angle, $\theta_2$, can be solved four different ways; two solutions are for if $\theta_3$ is in the first quadrant and two for if $\theta_3$ is in the fourth quadrant. One the solutions using the first quadrant $\theta_3$ value is shown here, but simply replacing $s_3^+$ with $s_3^-$ will provide the other fourth quadrand equations \ref{equ:theta2}.
+
+\begin{align}\label{equ:theta2}
+\begin{split}
+	\theta_{2_2} = arctan2((L_2 + L_3 c_3) p_{w_z} - L_3 s^+_3 \sqrt{p^2_{w_x} + p^2_{w_y}},
+	\\ (L_2+L_3 c_3) \sqrt{p^2_{w_x} + p^2_{w_y}}+ L_3 s^+_3 p_{w_z})
+\end{split}
+\end{align}
+
+\begin{align}\label{equ:theta2}
+\begin{split}
+	\theta_{2_2} = arctan2((L_2 + L_3 c_3) p_{w_z} + L_3 s^+_3 \sqrt{p^2_{w_x} + p^2_{w_y}},
+	\\ -(L_2+L_3 c_3) \sqrt{p^2_{w_x} + p^2_{w_y}}+ L_3 s^+_3 p_{w_z})
+\end{split}
+\end{align}
 
 \section{Discussion}
+The derived forward kinematic map 
 
 \bibliographystyle{IEEEtran} 
 \bibliography{IEEEabrv,McClure_Report} 
